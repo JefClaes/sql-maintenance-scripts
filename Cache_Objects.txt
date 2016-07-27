@@ -1,0 +1,15 @@
+SELECT DBName = CASE WHEN database_id = 32767 THEN 'RESOURCEDB' 
+				ELSE DB_NAME(database_id) END,
+	ObjName = o.name,
+	Size_MB = COUNT(1)/128.0
+FROM sys.dm_os_buffer_descriptors obd
+INNER JOIN sys.allocation_units au
+	ON obd.allocation_unit_id = au.allocation_unit_id
+INNER JOIN sys.partitions p
+	ON au.container_id = p.hobt_id
+INNER JOIN sys.objects o
+	ON p.object_id = o.object_id
+WHERE obd.database_id = DB_ID()
+AND o.type != 'S'
+GROUP BY obd.database_id, o.name
+ORDER BY 3 DESC

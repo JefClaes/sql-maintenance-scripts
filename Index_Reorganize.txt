@@ -1,0 +1,2 @@
+ALTER INDEX Index ON Table 
+REORGANIZE ;   
